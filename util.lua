@@ -7,7 +7,16 @@ function table.copy(t)
    return c
 end
 
+-- won't be copied by deepcopy()
+function table.makestatic(t)
+   t._static = true
+end
+
 function table.deepcopy(t, ref)
+   if t._static then
+      return t
+   end
+   
    if not ref then
       ref = {}  -- {original_table = copy_table}
    end
