@@ -1,4 +1,10 @@
 
+function table.pack(...)
+   return {n=select('#', ...), ...}
+end
+
+table.unpack = unpack
+
 function table.copy(t)
    local c = {}
    for k, v in pairs(t) do

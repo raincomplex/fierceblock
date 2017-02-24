@@ -1,10 +1,9 @@
 
 local PieceData = require('tgm/pieces')
 
-local C = Class()
+local C = Object.Component()
 
-function C:init(mode)
-   self.mode = mode
+function C:init()
 end
 
 function C:update(game)
@@ -18,11 +17,9 @@ function C:update(game)
       end
 
    elseif game.state == 'spawn' then
-      self.mode:send('getnextpiece', player)
-      local data = player.nextpiece
-      player.nextpiece = nil
+      local data = self:getnextpiece(player)
       local piece = well:spawn(player, data)
-      self.mode:send('paintpiece', piece)
+      self:paintpiece(piece)
 
       game.state = 'active'
 
@@ -43,9 +40,8 @@ function C:update(game)
 end
 
 function C:getnextpiece(player)
-   self.mode:send('getnextrandom', player)
-   player.nextpiece = PieceData[player.nextrandom]
-   player.nextrandom = nil
+   local nr = self:getnextrandom(player)
+   return PieceData[nr]
 end
 
 function C:paintpiece(piece)

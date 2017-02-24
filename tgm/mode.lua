@@ -6,15 +6,15 @@ M.fps = 61.681173
 local Core = require('tgm/core')
 local PieceData = require('tgm/pieces')
 local Randomizer = require('tgm/randomizer')
-local Checks = require('checks')
 
 function M.newmode()
-   local m = Object()
-   m:add(Core(m))
-   m.piecedata = PieceData
-   m:add(Randomizer(m))
-   m:add(Checks())
-   return m
+   local mode = Object()
+   mode:add(Core)
+   mode.piecedata = PieceData
+   mode:add(Randomizer)
+
+   mode:init()
+   return mode
 end
 
 function M.newgame()

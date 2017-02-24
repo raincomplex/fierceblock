@@ -1,7 +1,8 @@
 
 require('util')
 Class = require('class')
-Object = require('component')
+Object = require('object')
+Hook = require('hook')
 
 require('state')
 Draw = require('draw')
@@ -36,7 +37,7 @@ function love.update(dt)
       local frames = fpstimer:tick(dt)
 
       for i = 1, frames do
-         mode:send('update', game)
+         mode:update(game)
       end
    end
 end
