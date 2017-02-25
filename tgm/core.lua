@@ -1,6 +1,4 @@
 
-local PieceData = require('tgm/pieces')
-
 local C = Object.Component()
 
 function C:init()
@@ -17,9 +15,9 @@ function C:update(game)
       end
 
    elseif game.state == 'spawn' then
-      local data = self:getnextpiece(player)
+      local data = self.piecedata[self:call('getnextrandom', player)]
       local piece = well:spawn(player, data)
-      self:paintpiece(piece)
+      self:call('paintpiece', piece)
 
       game.state = 'active'
 
@@ -37,11 +35,6 @@ function C:update(game)
    elseif game.state == 'lineclear' then
       
    end
-end
-
-function C:getnextpiece(player)
-   local nr = self:getnextrandom(player)
-   return PieceData[nr]
 end
 
 function C:paintpiece(piece)

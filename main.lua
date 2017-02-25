@@ -37,7 +37,7 @@ function love.update(dt)
       local frames = fpstimer:tick(dt)
 
       for i = 1, frames do
-         mode:update(game)
+         mode:call('update', game)
       end
    end
 end

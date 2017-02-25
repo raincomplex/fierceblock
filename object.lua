@@ -9,6 +9,7 @@ local Hook = require('hook')
 
 local C = Class()
 
+
 -- components are just tables with functions in them, with a metatable for type checking
 
 local ComponentMT = {}
@@ -20,24 +21,39 @@ local function isComponent(c)
    return getmetatable(c) == ComponentMT
 end
 
+
+function C:init()
+   self.hooks = {}
+   self.warned = {}
+end
+
 function C:add(comp)
    assert(isComponent(comp), 'argument must be an Object.Component')
    
    for name, value in pairs(comp) do
       if type(value) == 'function' then
-         if name == 'add' then
-            error('Components may not use reserved names for functions: '..name)
+         if not self.hooks[name] then
+            self.hooks[name] = Hook(name)
          end
-         
-         if not self[name] then
-            self[name] = Hook(name)
-         end
-         self[name]:register(value)
+         self.hooks[name]:register(value)
          
       else
          error('Component with non-function value: '..name)
       end
    end
+end
+
+function C:call(name, ...)
+   local hook = self.hooks[name]
+   if not hook then
+      if not self.warned[name] then
+         print('Warning: hook called with no registered functions: ' .. name)
+         self.warned[name] = true
+      end
+      return
+   end
+
+   return hook(self, ...)
 end
 
 return C

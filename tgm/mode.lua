@@ -26,7 +26,7 @@ function M.newgame(mode)
    game.seed = os.time()
    
    -- call component init()s
-   mode:init(game)
+   mode:call('init', game)
    
    return game
 end
