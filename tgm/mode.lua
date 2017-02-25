@@ -6,12 +6,14 @@ M.fps = 61.681173
 local Core = require('tgm/core')
 local PieceData = require('tgm/pieces')
 local Randomizer = require('tgm/randomizer')
+local FullRandom = require('fullrandom')
 
 function M.newmode()
    local mode = Object()
    mode:add(Core)
    mode.piecedata = PieceData
-   mode:add(Randomizer)
+   --mode:add(Randomizer)
+   mode:add(FullRandom)
    return mode
 end
 
@@ -21,7 +23,7 @@ function M.newgame(mode)
    game:addWell(10, 20)
 
    game.state = 'spawn'
-   game.seed = 12345
+   game.seed = os.time()
    
    -- call component init()s
    mode:init(game)

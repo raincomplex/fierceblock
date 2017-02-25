@@ -6,7 +6,7 @@ local C = Object.Component()
 local pieces = {[0]='I','Z','S','J','L','O','T'}
 
 function C:init(game)
-   -- 235 72 199 36
+   -- XXX 235 72 199 36
    game.seed = 0xeb48c724
    --game.seed = 0x24c748eb
    
