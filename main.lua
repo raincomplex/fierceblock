@@ -28,7 +28,7 @@ end
 
 function startMode(m)
    mode = m.newmode()
-   game = m.newgame()
+   game = m.newgame(mode)
    fpstimer = FPSTimer(m.fps or 60)
 end
 

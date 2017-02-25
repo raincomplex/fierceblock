@@ -12,17 +12,19 @@ function M.newmode()
    mode:add(Core)
    mode.piecedata = PieceData
    mode:add(Randomizer)
-
-   mode:init()
    return mode
 end
 
-function M.newgame()
+function M.newgame(mode)
    local game = Game()
    game:addPlayer()
    game:addWell(10, 20)
 
    game.state = 'spawn'
+   game.seed = 12345
+   
+   -- call component init()s
+   mode:init(game)
    
    return game
 end
