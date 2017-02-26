@@ -1,0 +1,23 @@
+
+Your default.cfg should have these restrictions placed on UP/DOWN:
+
+    <port type="P1_JOYSTICK_UP">
+        <newseq type="standard">
+            KEYCODE_8PAD NOT KEYCODE_4PAD NOT KEYCODE_6PAD
+        </newseq>
+    </port>
+    <port type="P1_JOYSTICK_DOWN">
+        <newseq type="standard">
+            KEYCODE_5PAD NOT KEYCODE_4PAD NOT KEYCODE_6PAD
+        </newseq>
+    </port>
+    <port type="P1_JOYSTICK_LEFT">
+        <newseq type="standard">
+            KEYCODE_4PAD
+        </newseq>
+    </port>
+    <port type="P1_JOYSTICK_RIGHT">
+        <newseq type="standard">
+            KEYCODE_6PAD
+        </newseq>
+    </port>
