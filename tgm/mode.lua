@@ -12,8 +12,8 @@ function M.newmode()
    local mode = Object()
    mode:add(Core)
    mode.piecedata = PieceData
-   --mode:add(Randomizer)
-   mode:add(FullRandom)
+   mode:add(Randomizer)
+   --mode:add(FullRandom)
    return mode
 end
 
