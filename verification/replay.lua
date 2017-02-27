@@ -2,7 +2,10 @@
 local M = {}
 
 local function newFrame()
-   return {input={}}
+   return {
+      input={},
+      field={},
+   }
 end
 
 function M.load(path)
@@ -39,9 +42,14 @@ function M.load(path)
       elseif item[1] == 'frame' then
          table.insert(rec, frame)
          frame = newFrame()
-         
+
       elseif item[1] == 'input' then
          frame.input[item[2]] = (item[3] == '1')
+         
+      elseif item[1] == 'field' then
+         local x, y = item[2], item[3]
+         local block = item[4]
+         frame.field[x + (y-1)*10] = block
 
       else
          print('skipping unknown item: ' .. item[1])

@@ -14,6 +14,7 @@ package.path = scriptdir..'/?.lua'
 require('util')
 portinput = require('portinput')
 replaymod = require('replay')
+fieldmod = require('field')
 
 --portinput.printfields()
 
@@ -53,7 +54,7 @@ if emu.romname() ~= 'tgm2p' then
    return
 end
 
-fieldaddr = 0x6078657
+fieldAddr = 0x6078657
 BlockStateAddr = 0x06064BF5
 prngAddr = 0x06064BA8
 pieceAddr = 0x6064bf7
@@ -77,6 +78,9 @@ function startFunc()
       writemem(pieceAddr+2, {Replay.piece})
       local h = {Replay.piece - 2, 1, 2, 2}
       writemem(blockHistory, h)
+
+      -- write the first input frame
+      portinput.writeDelta(Replay[1].input)
    end
 end
 
@@ -119,11 +123,15 @@ do
       end
       
       portinput.writeDelta(inp)
+
       frame = frame + 1
    end
 end
 
-frame = 0
+frame = 1
+verify = {
+   field = {},
+}
 
 function tick()
    if machine.paused then
@@ -135,29 +143,67 @@ function tick()
       return
    end
    
-   -- user input
-   frame = frame + 1
-   
    if mode == 'record' then
+      -- user input
       local r = portinput.readDelta()
       for k, v in pairs(r) do
          print('input', k, v and '1' or '0')
       end
-   else
-      local i = Replay.pos + 1
-      if not Replay[i] then
-         finished(i)
-         return
+
+      -- play field
+      for i, block in pairs(fieldmod.readDelta()) do
+         local x, y = fieldmod.getpos(i)
+         print('field', x, y, block or '-')
       end
       
-      Replay.pos = i
-      
-      portinput.writeDelta(Replay[i].input)
-   end
-   
-   if mode == 'record' then
       print('frame')
+      
+   else -- mode == 'replay'
+      local cur = Replay[Replay.pos]
+      local next = Replay[Replay.pos + 1]
+      if not cur then
+         finished(Replay.pos)
+         return
+      end
+      Replay.pos = Replay.pos + 1
+
+      -- set user input
+      -- it's shifted back by a frame because we read it after it's been used, so it needs to be written before that frame happens
+      if next then
+         portinput.writeDelta(next.input)
+      end
+
+      -- verify play field
+      for i, block in pairs(cur.field) do
+         if block == '-' then block = nil end
+         verify.field[i] = block
+      end
+      for i, block in fieldmod.read() do
+         local x, y = fieldmod.getpos(i)
+         if verify.field[i] ~= block then
+            desync('field', x, y, cur.field[i], block)
+         end
+      end
    end
+
+   frame = frame + 1
+end
+
+function desync(kind, ...)
+   local n = select('#', ...)
+   local args = {...}
+   for i = 1, n do
+      args[i] = tostring(args[i])
+   end
+   table.insert(args, 1, kind)
+   table.insert(args, 1, frame)
+
+   print('DESYNC', unpack(args))
+   
+   local f = io.open(scriptdir..'/desync.log', 'a')
+   f:write(table.concat(args, '\t'))
+   f:write('\n')
+   f:close()
 end
 
 function finished(...)
