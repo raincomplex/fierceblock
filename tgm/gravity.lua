@@ -1,13 +1,25 @@
 
 local C = Object.Component()
 
+local gravity = 64
+
 function C:paintpiece(piece)
    piece.fall = 0
 end
 
 function C:gravitystep(player)
-   local gravity = 32
    for _, piece in ipairs(player.active) do
+      
+      if player.input.down then
+         if gravity < 256 then
+            piece.fall = piece.fall + 256 - gravity
+         end
+         if piece:resting() then
+            piece:lock()
+            goto continue
+         end
+      end
+      
       piece.fall = piece.fall + gravity
       while piece.fall >= 256 do
          piece.fall = piece.fall - 256
@@ -33,6 +45,8 @@ function C:gravitystep(player)
             break
          end
       end
+
+      ::continue::
    end
 end
 

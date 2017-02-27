@@ -26,6 +26,7 @@ function C:update(game)
          self:call('rotatestep', player)
          self:call('shiftstep', player)
          self:call('gravitystep', player)
+         self:call('clearstep', player)
          if #player.active == 0 then
             game.state = 'entry'
          end
@@ -58,6 +59,25 @@ function C:shiftstep(player)
             self:call('movepiece', piece, 1, 0)
          end
       end
+   end
+end
+
+function C:clearstep(player)
+   local well = player.active[1] and player.active[1].well
+   if not well then
+      return
+   end
+
+   local full = {}
+   for y = 1, well.height do
+      if well:filled(y) then
+         table.insert(full, y)
+         -- TODO erase/collapse with a timer
+      end
+   end
+
+   if #full > 0 then
+      well:collapse(full)
    end
 end
 

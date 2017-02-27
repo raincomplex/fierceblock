@@ -86,6 +86,43 @@ function Well:set(x, y, block)
    self._blocks[x + y * self.width] = block
 end
 
+function Well:filled(y)
+   for x = 1, self.width do
+      if not self:get(x, y) then
+         return false
+      end
+   end
+   return true
+end
+
+function Well:erase(y)
+   for x = 1, self.width do
+      self:set(x, y, nil)
+   end
+end
+
+function Well:collapse(ylist)
+   local srcy, desty = 1, 1
+   
+   local skip = {}
+   for _, y in ipairs(ylist) do
+      skip[y] = true
+   end
+   
+   while desty <= self.height do
+      while skip[srcy] do
+         srcy = srcy + 1
+      end
+      if srcy ~= desty then
+         for x = 1, self.width do
+            self:set(x, desty, self:get(x, srcy))
+         end
+      end
+      desty = desty + 1
+      srcy = srcy + 1
+   end
+end
+
 
 Piece = Class()
 
