@@ -69,12 +69,13 @@ function startFunc()
       local h = readmem(blockHistory, 4)
       assert(h[2] == 1 and h[3] == 2 and h[4] == 2, 'unexpected history')
       assert(h[1] == piece[1] - 2, 'history mismatch')
+      print('start')
       
    else
       print('starting replay')
-      writemem(prngAddr, Replay.prngseed)
-      writemem(pieceAddr+2, Replay.piece)
-      local h = {Replay.piece[1] - 2, 1, 2, 2}
+      writemem(prngAddr, Replay.prng)
+      writemem(pieceAddr+2, {Replay.piece})
+      local h = {Replay.piece - 2, 1, 2, 2}
       writemem(blockHistory, h)
    end
 end
@@ -136,38 +137,26 @@ function tick()
    
    -- user input
    frame = frame + 1
-   if mode == 'record' then
-      print('frame', frame)
-   end
    
    if mode == 'record' then
       local r = portinput.readDelta()
       for k, v in pairs(r) do
-         print('input', k, v)
+         print('input', k, v and '1' or '0')
       end
    else
       local i = Replay.pos + 1
-      local d = {}
       if not Replay[i] then
          finished(i)
          return
       end
       
-      while Replay[i][1] ~= 'frame' do
-         if Replay[i][1] == 'input' then
-            d[Replay[i][2]] = (Replay[i][3] == 'true')
-         end
-         i = i + 1
-         
-         if not Replay[i] then
-            finished(i)
-            return
-         end
-      end
       Replay.pos = i
-      assert(tonumber(Replay[i][2]) == frame + 1)
       
-      portinput.writeDelta(d)
+      portinput.writeDelta(Replay[i].input)
+   end
+   
+   if mode == 'record' then
+      print('frame')
    end
 end
 
