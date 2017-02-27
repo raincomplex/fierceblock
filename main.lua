@@ -3,19 +3,11 @@ require('util')
 Class = require('class')
 Object = require('object')
 Hook = require('hook')
+Timer = require('timer')
 
 require('state')
 Draw = require('draw')
-
-Draw.loadface('blocks/gameboy.png', {
-                 {name='J', x=0, y=0, w=64, h=64},
-                 {name='T', x=64, y=0, w=64, h=64},
-                 {name='S', x=128, y=0, w=64, h=64},
-                 {name='I', x=192, y=0, w=64, h=64},
-                 {name='O', x=0, y=64, w=64, h=64},
-                 {name='Z', x=64, y=64, w=64, h=64},
-                 {name='L', x=128, y=64, w=64, h=64},
-})
+require('faces')
 
 Modes = {}
 Modes.tgm = require('tgm/mode')
@@ -27,8 +19,7 @@ function love.load()
 end
 
 function startMode(m)
-   mode = m.newmode()
-   game = m.newgame(mode)
+   mode, game = m.new()
    fpstimer = FPSTimer(m.fps or 60)
 end
 
@@ -37,7 +28,8 @@ function love.update(dt)
       local frames = fpstimer:tick(dt)
 
       for i = 1, frames do
-         mode:call('update', game)
+         game:update()
+         mode:update(game)
       end
    end
 end
