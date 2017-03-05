@@ -1,4 +1,6 @@
 
+math.randomseed(os.time())
+
 machine = manager:machine()
 memory = machine.devices[":maincpu"].spaces["program"]
 
@@ -89,21 +91,28 @@ do
    local press = {}
    local mode = modenumber
    -- modes: normal, master, tgm+, death, doubles
+
+   local base = 195
+   if mode == 'record' then
+      -- FIXME this is a hack to prevent the same seed from being used for every game
+      -- the real fix here is to find a random seed and inject it
+      base = base + math.random(0, 60)
+   end
    
    function startup()
-      if frame == 195 then
+      if frame == base then
          press.a = 2
-      elseif frame == 205 then
+      elseif frame == base+10 then
          press.coin = 1
-      elseif frame == 215 then
+      elseif frame == base+20 then
          press.start = 1
-      elseif frame == 245 then
+      elseif frame == base+50 then
          if mode > 1 then
             press.down = 1
             frame = frame - 5
             mode = mode - 1
          end
-      elseif frame == 250 then
+      elseif frame == base+55 then
          press.a = 1
       elseif memory:read_u8(BlockStateAddr) == 1 then
          -- game is about to start
