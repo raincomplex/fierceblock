@@ -29,7 +29,7 @@ end
 local function newgame(mode)
    local game = Game()
    game:addPlayer()
-   game:addWell(10, 20)
+   game:addWell(12, 22)
 
    game.seed = os.time()
    

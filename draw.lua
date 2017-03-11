@@ -48,6 +48,9 @@ function M.draw(well, rect)
       if player.level then
          love.graphics.print(player.level, 20, 420)
       end
+      if player.lines then
+         love.graphics.print(player.lines, 20, 440)
+      end
    end
 end
 

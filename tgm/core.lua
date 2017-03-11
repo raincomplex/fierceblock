@@ -22,13 +22,19 @@ function C:update(game)
       elseif game.state == 'spawn' then
          local data = self.piecedata[self:call('getnextrandom', player)]
          local well = game.wells[i]
+         
          local piece = game:addPiece(player, well, data)
+         self:call('paintpiece', piece)
+
          if player.level % 100 ~= 99 then
             player.level = player.level + 1
          end
-         self:call('paintpiece', piece)
-
-         game.state = 'active'
+         
+         if piece:collide() then
+            game.state = 'over'
+         else
+            game.state = 'active'
+         end
 
       elseif game.state == 'active' then
          self:call('rotatestep', player)
