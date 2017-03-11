@@ -11,11 +11,14 @@ require('faces')
 
 Modes = {}
 Modes.tgm = require('tgm/mode')
+Modes.pento = require('pento/mode')
 
 FPSTimer = require('fps')
 
-function love.load()
-   startMode(Modes.tgm)
+function love.load(args)
+   -- TODO accept replay file to verify
+   
+   startMode(Modes.pento)
 end
 
 function startMode(m)

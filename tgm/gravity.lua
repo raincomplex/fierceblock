@@ -1,7 +1,7 @@
 
 local C = Object.Component()
 
-local gravity = 64
+local gravity = 8
 
 function C:paintpiece(piece)
    piece.fall = 0
