@@ -43,6 +43,12 @@ function M.draw(well, rect)
          drawblock(x, y, block)
       end
    end
+
+   for _, player in ipairs(well.game.players) do
+      if player.level then
+         love.graphics.print(player.level, 20, 420)
+      end
+   end
 end
 
 -- sprites = {{name=, x=, y=, w=, h=}}

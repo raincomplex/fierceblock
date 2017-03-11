@@ -65,6 +65,10 @@ end
 function keyPressed(key, value)
    local bind = bindings[key]
 
+   if key == 'r' then
+      startMode(Modes.pento)
+   end
+   
    if bind then
       local player = game.players[bind.player]
       if player then

@@ -4,6 +4,11 @@ local C = Object.Component()
 function C:init(game)
    game.timer = Timer(0)
    game.state = 'entry'
+
+   for _, player in ipairs(game.players) do
+      player.level = 0
+      player.lines = 0
+   end
 end
 
 function C:update(game)
@@ -18,6 +23,9 @@ function C:update(game)
          local data = self.piecedata[self:call('getnextrandom', player)]
          local well = game.wells[i]
          local piece = game:addPiece(player, well, data)
+         if player.level % 100 ~= 99 then
+            player.level = player.level + 1
+         end
          self:call('paintpiece', piece)
 
          game.state = 'active'
@@ -78,6 +86,8 @@ function C:clearstep(player)
 
    if #full > 0 then
       well:collapse(full)
+      player.lines = player.lines + #full
+      player.level = player.level + #full
    end
 end
 
