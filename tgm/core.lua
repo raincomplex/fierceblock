@@ -100,10 +100,10 @@ end
 function C:paintpiece(piece)
    local used = {}
    for _, block in ipairs(piece.blocks) do
-      --block.face = piece.data.name
-      repeat
+      block.face = piece.data.name
+      --[[repeat
          block.face = love.math.random(1, 16)
-      until not used[block.face]
+      until not used[block.face] --]]
       used[block.face] = true
    end
 end
