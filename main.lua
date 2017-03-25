@@ -17,7 +17,8 @@ FPSTimer = require('fps')
 
 function love.load(args)
    -- TODO accept replay file to verify
-   
+
+   Draw.load()
    startMode(Modes.pento)
 end
 
@@ -79,5 +80,12 @@ end
 
 function love.draw()
    love.graphics.clear(127, 127, 127)
-   Draw.draw(game.wells[1], {x=10, y=10, w=200, h=400})
+   Draw.drawbg()
+
+   local scrw, scrh = love.graphics.getDimensions()
+   local h = scrh * .7
+   local w = h / 2
+   local x = scrw / 2 - w / 2
+   local y = scrh / 2 - h / 2
+   Draw.draw(game.wells[1], {x=x, y=y, w=w, h=h})
 end

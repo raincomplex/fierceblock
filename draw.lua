@@ -1,8 +1,30 @@
 
 local M = {}
+local bgs = {}
+local frames = {}
 local blockfaces = {}
 
+function M.load()
+   bgs.cafe = love.graphics.newImage('bgs/cafe.jpg')
+   frames.wood = {
+      texture = love.graphics.newImage('frames/wood.png'),
+      inner = {x=98, y=98, w=493, h=986},
+   }
+end
+
+function M.drawbg()
+   local bg = bgs.cafe
+   
+   local w, h = bg:getDimensions()
+   local scrw, scrh = love.graphics.getDimensions()
+   local scale = scrh / h
+   local x = scrw / 2 - (w * scale) / 2
+   love.graphics.draw(bg, x, 0, 0, scale)
+end
+
 function M.draw(well, rect)
+   local frame = frames.wood
+   
    local bw = rect.w / well.width
    local bh = rect.h / well.height
 
@@ -24,8 +46,19 @@ function M.draw(well, rect)
       end
    end
 
-   love.graphics.setColor(0, 0, 0, 127)
-   love.graphics.rectangle('fill', rect.x, rect.y, rect.w, rect.h)
+   -- draw frame
+   if frame then
+      local fw, fh = frame.texture:getDimensions()
+      local sx = rect.w / frame.inner.w
+      local sy = rect.h / frame.inner.h
+      local ox = -sx * frame.inner.x
+      local oy = -sy * frame.inner.y
+      love.graphics.draw(frame.texture, ox + rect.x, oy + rect.y, 0, sx, sy)
+   else
+      -- default frame is just a translucent box
+      love.graphics.setColor(0, 0, 0, 192)
+      love.graphics.rectangle('fill', rect.x, rect.y, rect.w, rect.h)
+   end
    
    for y = well.height, 1, -1 do
       for x = 1, well.width do
