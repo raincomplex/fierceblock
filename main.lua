@@ -19,7 +19,7 @@ function love.load(args)
    -- TODO accept replay file to verify
 
    Draw.load()
-   startMode(Modes.pento)
+   startMode(Modes.tgm)
 end
 
 function startMode(m)

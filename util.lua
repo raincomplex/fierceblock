@@ -77,3 +77,12 @@ function table.dump(t, depth, ref)
       print(indent .. t)
    end
 end
+
+function table.removeValue(t, v)
+   for k, tv in pairs(t) do
+      if v == tv then
+         t[k] = nil
+         return
+      end
+   end
+end

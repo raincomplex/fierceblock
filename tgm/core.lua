@@ -5,9 +5,22 @@ function C:init(game)
    game.timer = Timer(0)
    game.state = 'entry'
 
-   for _, player in ipairs(game.players) do
+   for i, player in ipairs(game.players) do
       player.level = 0
       player.lines = 0
+
+      -- FIXME binding game and player here is bad
+      local function generator()
+         local r = self:call('getnextrandom', player)
+         local data = self.piecedata[r]
+         local well = game.wells[i]
+         
+         local piece = Piece(nil, nil, data)
+         self:call('paintpiece', piece)
+
+         return piece
+      end
+      player.sequence = Sequence(generator)
    end
 end
 
@@ -20,11 +33,8 @@ function C:update(game)
          end
 
       elseif game.state == 'spawn' then
-         local data = self.piecedata[self:call('getnextrandom', player)]
-         local well = game.wells[i]
-         
-         local piece = game:addPiece(player, well, data)
-         self:call('paintpiece', piece)
+         local piece = player.sequence:pop()
+         piece:addTo(player, game.wells[i])
 
          if player.level % 100 ~= 99 then
             player.level = player.level + 1
@@ -98,13 +108,8 @@ function C:clearstep(player)
 end
 
 function C:paintpiece(piece)
-   local used = {}
-   for _, block in ipairs(piece.blocks) do
-      block.face = piece.data.name
-      --[[repeat
-         block.face = love.math.random(1, 16)
-      until not used[block.face] --]]
-      used[block.face] = true
+   if Draw.paintfunc then
+      Draw.paintfunc(piece)
    end
 end
 

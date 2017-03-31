@@ -25,13 +25,6 @@ function Game:addPlayer(...)
    return p
 end
 
-function Game:addPiece(player, well, ...)
-   local p = Piece(player, well, ...)
-   table.insert(player.active, p)
-   table.insert(well.active, p)
-   return p
-end
-
 function Game:copy()
    return table.deepcopy(self)
 end
@@ -56,6 +49,27 @@ function Player:update()
       end
       self.lastinput[name] = value
    end
+end
+
+
+Sequence = Class()
+
+function Sequence:init(generator)
+   self.generator = generator
+   self.buffer = {}
+end
+
+function Sequence:peek(n)
+   while #self.buffer < n do
+      table.insert(self.buffer, self.generator())
+   end
+   return self.buffer[n]
+end
+
+function Sequence:pop()
+   local value = self:peek(1)
+   table.remove(self.buffer, 1)
+   return value
 end
 
 
@@ -139,6 +153,20 @@ function Piece:init(player, well, data)
    for i, pos in ipairs(data.rotation[1]) do
       self.blocks[i] = Block(pos)
    end
+end
+
+function Piece:addTo(player, well)
+   if self.player then
+      table.removeValue(self.player.active, self)
+   end
+   self.player = player
+   table.insert(player.active, self)
+   
+   if self.well then
+      table.removeValue(self.well.active, self)
+   end
+   self.well = well
+   table.insert(well.active, self)
 end
 
 --[[ PieceData =

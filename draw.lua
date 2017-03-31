@@ -76,9 +76,9 @@ function M.draw(well, rect)
          drawblock(x, y, block)
       end
 
-      mode:call('peeknextrandom', piece.player, 3)
-      for i, n in ipairs(piece.player.randbuffer) do
-         for _, block in ipairs(M.getblocks(n)) do
+      for i = 1, 3 do
+         local p = piece.player.sequence:peek(i)
+         for _, block in ipairs(p.blocks) do
             local x = well.width + 4 + block.x
             local y = well.height + 3 - i*4 + block.y
             drawblock(x, y, block)
@@ -94,13 +94,6 @@ function M.draw(well, rect)
          love.graphics.print(player.lines, 20, 440)
       end
    end
-end
-
-function M.getblocks(name)
-   local data = mode.piecedata[name]
-   local p = Piece(nil, nil, data)
-   mode:call('paintpiece', p)
-   return p.blocks
 end
 
 -- sprites = {{name=, x=, y=, w=, h=}}
