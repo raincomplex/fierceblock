@@ -89,8 +89,7 @@ end
 do
    local frame = 0
    local press = {}
-   local mode = modenumber
-   -- modes: normal, master, tgm+, death, doubles
+   -- modenumber is an int 0=normal, 1=master, 2=tgm+, 3=death, 4=doubles
 
    local base = 195
    if mode == 'record' then
@@ -107,10 +106,10 @@ do
       elseif frame == base+20 then
          press.start = 1
       elseif frame == base+50 then
-         if mode > 1 then
+         if modenumber > 1 then
             press.down = 1
             frame = frame - 5
-            mode = mode - 1
+            modenumber = modenumber - 1
          end
       elseif frame == base+55 then
          press.a = 1
