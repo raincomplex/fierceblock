@@ -40,6 +40,8 @@ function C:update(game)
             player.level = player.level + 1
          end
          
+         self:call('gravitystep', player)
+         
          if piece:collide() then
             game.state = 'over'
          else
