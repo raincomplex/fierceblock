@@ -5,7 +5,7 @@ M.fps = 61.681173
 
 local Core = require('tgm/core')
 local Physics = require('twist/physics')
-local Gravity = require('twist/gravity')
+local Gravity = require('tgm/gravity')
 local Shift = require('tgm/shift')
 local Lock = require('twist/lock')
 local PieceData = require('tgm/pieces')
@@ -37,6 +37,7 @@ local function newgame(mode)
    
    -- call component init()s
    mode:call('init', game)
+   mode:call('setgravity', game.players[1], math.huge)
    
    return game
 end

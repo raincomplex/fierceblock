@@ -1,26 +1,39 @@
 
 local C = Object.Component()
 
-local gravity = 8
+function C:init(game)
+   for _, player in ipairs(game.players) do
+      player.gravity = 8
+   end
+end
 
 function C:paintpiece(piece)
    piece.fall = 0
 end
 
+function C:setgravity(player, amount)
+   player.gravity = amount
+end
+
 function C:gravitystep(player)
    for _, piece in ipairs(player.active) do
+
+      if not player.input.down then
+         player.lockprotect = false
+      end
       
-      if player.input.down then
-         if gravity < 256 then
-            piece.fall = piece.fall + 256 - gravity
+      if player.input.down and not player.lockprotect then
+         if player.gravity < 256 then
+            piece.fall = piece.fall + 256 - player.gravity
          end
          if piece:resting() then
+            player.lockprotect = true
             piece:lock()
             goto continue
          end
       end
       
-      piece.fall = piece.fall + gravity
+      piece.fall = piece.fall + player.gravity
       while piece.fall >= 256 do
          piece.fall = piece.fall - 256
          local r = piece:resting()
@@ -29,8 +42,8 @@ function C:gravitystep(player)
                -- inf grav, fell onto another player's piece
                break
             end
-            if piece.fall < 256 - gravity then
-               piece.fall = 256 - gravity
+            if piece.fall < 256 - player.gravity then
+               piece.fall = 256 - player.gravity
                break -- just in case gravity is 0
             end
          elseif not r then
