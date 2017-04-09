@@ -7,7 +7,7 @@ local Core = require('tgm/core')
 local Physics = require('twist/physics')
 local Gravity = require('tgm/gravity')
 local Shift = require('tgm/shift')
-local Lock = require('twist/lock')
+local Lock = require('tgm/lock')
 local PieceData = require('tgm/pieces')
 local Randomizer = require('tgm/randomizer')
 
@@ -37,7 +37,9 @@ local function newgame(mode)
    
    -- call component init()s
    mode:call('init', game)
+   
    mode:call('setgravity', game.players[1], math.huge)
+   mode:call('setlockdelay', game.players[1], math.huge)
    
    return game
 end

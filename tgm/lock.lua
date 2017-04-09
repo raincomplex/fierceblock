@@ -1,10 +1,18 @@
 
 local C = Object.Component()
 
-local lockdelay = 20
+function C:init(game)
+   for _, player in ipairs(game.players) do
+      player.lockdelay = 20
+   end
+end
 
 function C:paintpiece(piece)
    piece.lockdelay = 0
+end
+
+function C:setlockdelay(player, amount)
+   player.lockdelay = amount
 end
 
 function C:fallstep(piece)
@@ -16,7 +24,7 @@ function C:update(game)
       for _, piece in ipairs(player.active) do
          if piece:resting() then
             piece.lockdelay = piece.lockdelay + 1
-            if piece.lockdelay >= lockdelay then
+            if piece.lockdelay >= player.lockdelay then
                piece:lock()
             end
          end
