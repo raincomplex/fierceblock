@@ -8,7 +8,7 @@ local nrolls = 6
 
 function C:init(game)
    -- XXX 235 72 199 36
-   game.seed = 0xeb48c724
+   game.seed = os.time() --0xeb48c724
 
    -- for seeds from MAME, need to roll back by one read(), because the first piece was already generated
    game.seed = PRNG.unrand(game.seed)
