@@ -286,6 +286,16 @@ function Piece:remove()
    end
 end
 
+function Piece:getblocks()
+   local r = {}
+   for _, block in ipairs(self.blocks) do
+      local x = self.x + block.x
+      local y = self.y + block.y
+      table.insert(r, {x=x, y=y})
+   end
+   return r
+end
+
 
 Block = Class()
 

@@ -12,14 +12,17 @@ require('faces')
 Modes = {}
 Modes.tgm = require('tgm/mode')
 Modes.pento = require('pento/mode')
+Modes.twist = require('twist/mode')
 
 FPSTimer = require('fps')
+
+MODE = Modes.twist
 
 function love.load(args)
    -- TODO accept replay file to verify
 
    Draw.load()
-   startMode(Modes.tgm)
+   startMode(MODE)
 end
 
 function startMode(m)
@@ -67,7 +70,7 @@ function keyPressed(key, value)
    local bind = bindings[key]
 
    if key == 'r' then
-      startMode(Modes.pento)
+      startMode(MODE)
    end
    
    if bind then
