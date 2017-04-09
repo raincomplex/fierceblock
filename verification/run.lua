@@ -76,10 +76,34 @@ function startFunc()
       
    else
       print('starting replay')
-      writemem(prngAddr, Replay.prng)
-      writemem(pieceAddr+2, {Replay.piece})
-      local h = {Replay.piece - 2, 1, 2, 2}
-      writemem(blockHistory, h)
+      if Replay.prng then
+         writemem(prngAddr, Replay.prng)
+         writemem(pieceAddr+2, {Replay.piece})
+         local h = {Replay.piece - 2, 1, 2, 2}
+         writemem(blockHistory, h)
+      else
+         -- find first piece and write it
+         for i = 1, 120 do
+            local p = Replay[i].active
+            if p then
+               writemem(pieceAddr+2, {pieceNameToNumber[p]})
+               break
+            end
+         end
+      end
+
+      if Replay.lag then
+         for i = 2, Replay.lag+1 do
+            for k, v in pairs(Replay[i].input) do
+               Replay[1].input[k] = v
+            end
+         end
+
+         for i = 2, #Replay do
+            local r = Replay[i + Replay.lag]
+            Replay[i].input = r and r.input
+         end
+      end
 
       -- write the first input frame
       portinput.writeDelta(Replay[1].input)
@@ -142,6 +166,8 @@ verify = {
    field = {},
 }
 
+pieceNameToNumber = {I=2, Z=3, S=4, J=5, L=6, O=7, T=8}
+
 function tick()
    if machine.paused then
       return
@@ -176,6 +202,17 @@ function tick()
       end
       Replay.pos = Replay.pos + 1
 
+      -- set active piece if we're not using a seed
+      if next then
+         local piece = next.active
+         if not Replay.prng and piece then
+            if piece ~= '-' then
+               local p = pieceNameToNumber[piece]
+               writemem(pieceAddr+2, {p})
+            end
+         end
+      end
+
       -- set user input
       -- it's shifted back by a frame because we read it after it's been used, so it needs to be written before that frame happens
       if next then
@@ -189,13 +226,43 @@ function tick()
       end
       for i, block in fieldmod.read() do
          local x, y = fieldmod.getpos(i)
-         if verify.field[i] ~= block then
-            desync('field', x, y, cur.field[i], block)
+         if verify.field[i] ~= block and not (verify.field[i] == 'X' and block) then
+            desyncfield()
          end
       end
    end
 
    frame = frame + 1
+end
+
+function desyncfield()
+   print('Expecting:')
+   for y = 20, 1, -1 do
+      local row = ''
+      for x = 1, 10 do
+         local i = x + (y-1)*10
+         row = row .. (verify.field[i] or '-')
+      end
+      print(row)
+   end
+   print()
+   
+   print('Have:')
+   local this = {}
+   for i, block in fieldmod.read() do
+      local x, y = fieldmod.getpos(i)
+      this[x..','..y] = block
+   end
+   for y = 20, 1, -1 do
+      local row = ''
+      for x = 1, 10 do
+         local i = x + (y-1)*10
+         row = row .. (this[x..','..y] or '-')
+      end
+      print(row)
+   end
+
+   finished('field desync')
 end
 
 function desync(kind, ...)

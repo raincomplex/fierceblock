@@ -55,8 +55,11 @@ end
 
 function M.writeDelta(d)
    for bind, value in pairs(d) do
-      local field = port.fields[bindToMame[bind]]
-      field:set_value(value and field.mask or 0)
+      local mame = bindToMame[bind]
+      if mame then
+         local field = port.fields[mame]
+         field:set_value(value and field.mask or 0)
+      end
    end
 end
 

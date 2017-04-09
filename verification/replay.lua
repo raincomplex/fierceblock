@@ -43,6 +43,9 @@ function M.load(path)
          table.insert(rec, frame)
          frame = newFrame()
 
+      elseif item[1] == 'piece' then
+         frame.active = item[2]
+
       elseif item[1] == 'input' then
          frame.input[item[2]] = (item[3] == '1')
          
@@ -52,7 +55,7 @@ function M.load(path)
          frame.field[x + (y-1)*10] = block
 
       else
-         print('skipping unknown item: ' .. item[1])
+         print('skipping unknown item: ' .. tostring(item[1]))
       end
    end
    return rec
