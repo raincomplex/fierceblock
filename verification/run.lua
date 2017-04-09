@@ -97,7 +97,8 @@ do
       -- the real fix here is to find a random seed and inject it
       base = base + math.random(0, 60)
    end
-   
+
+   local modenumber = modenumber
    function startup()
       if frame == base then
          press.a = 2
